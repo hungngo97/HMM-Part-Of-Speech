@@ -123,15 +123,16 @@ class TrigramHMM:
         sentence_tags = []
         i = 0
         for sentence in sentences:
+            print('Training Sentence No. ' + str(i))
             self.CURRENT_SENTENCE = i
             self.emission_transition = {}
             words, tags = sentence
-            for i in range(len(words)):
-                if i == 0:
+            for j in range(len(words)):
+                if j == 0:
                     # Start of sentence
-                    self.set_begin_sentence(words[i])
+                    self.set_begin_sentence(words[j])
                 else:
-                    self.find_current_tag_viterbi(words[i], i)  # Viterbi
+                    self.find_current_tag_viterbi(words[j], j)  # Viterbi
             predicted_tags = self.find_tag_sentence(words)
             sentence_tags.append(predicted_tags)
             i += 1
