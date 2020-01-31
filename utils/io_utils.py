@@ -3,7 +3,12 @@ import re
 import random
 import json
 from constants.model_constants import (
-    UNK, STOP, START, TWEET_DIRECT_UNK, EMOJI_UNK, HASHTAG_UNK, URL_UNK, TIME_UNK)
+    UNK, STOP, START, TWEET_DIRECT_UNK, EMOJI_UNK, HASHTAG_UNK, URL_UNK, TIME_UNK, NUM_UNK)
+import re
+
+time_re = re.compile(r'^(([01]\d|2[0-3]):([0-5]\d)|24:00)$')
+def is_time_format(s):
+    return bool(time_re.match(s))
 """
     Read sentences from a file and split all string into a list of words in each
     string
@@ -77,8 +82,18 @@ def selective_unk_sentences(sentences, unk_threshold=3, unk_prob=0.5):
         words = sentence[0]
         for i, word in enumerate(words):
             if (token_frequency[word] < unk_threshold):
-                # Replace the current token with UNK with UNK probability
-                # TODO: Do Regexp here to replace better UNK
-                if (random.random() > unk_prob):
+                if word.startsWith('@'):
+                    sentence[0][i] = TWEET_DIRECT_UNK
+                elif word.startsWith('\\'):
+                    sentence[0][i] = EMOJI_UNK
+                elif word.startsWith('#'):
+                   sentence[0][i] = HASHTAG_UNK
+                elif word.startsWith('www') or word.startsWith('http'):
+                    sentence[0][i] = URL_UNK
+                elif word.isdigit():
+                    sentence[0][i] = NUM_UNK
+                elif is_time_format(word):
+                    sentence[0][i] = TIME_UNK
+                elif (random.random() > unk_prob):
                     sentence[0][i] = UNK
     return sentences

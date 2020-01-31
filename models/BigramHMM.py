@@ -40,7 +40,7 @@ class HMM:
                 float(self.tag_unigrams[y] + self.SMOOTHING)
         else:
             # If that word has never been seen with that tag before
-            e_value = 1 / float(self.tag_unigrams[y] + 1000)
+            e_value = 1 / float(self.tag_unigrams[y] + self.SMOOTHING)
         return e_value
 
     """
@@ -118,17 +118,13 @@ class HMM:
         i = 0
         for sentence in sentences:
             self.emission_transition = {}
-            if i > 0:
-                break
             words, tags = sentence
-            print('Words length', len(words))
             i = 0
             for i in range(len(words)):
                 if i == 0:
                     # Start of sentence
                     self.set_begin_sentence(words[i])
                 else:
-                    print('Word iteration: ', i)
                     self.find_current_tag_viterbi(words[i], i)  # Viterbi
             predicted_tags = self.find_tag_sentence(words)
             sentence_tags.append(predicted_tags)
@@ -139,7 +135,6 @@ class HMM:
         sentence_tags = []
         self.emission_transition = {}
         words, tags = sentence
-        print('Words length', len(words))
         i = 0
         for i in range(len(words)):
             if i == 0:
@@ -164,7 +159,7 @@ class HMM:
 
     def find_current_tag_viterbi(self, word, word_index):
         tags = self.tag_unigrams.keys()
-        print('Word', word)
+        # print('Word', word)
         for current_tag in tags:
                 # Try all possible tags for current word
             max_value = 0
@@ -178,10 +173,12 @@ class HMM:
                     # Try all candidate previous tags
                     if candidate_previous_tag in self.emission_transition[word_index - 1].keys():
                         # Dynamic Programming!
+                        """
                         print('**** Curr tag', current_tag)
                         print('***** Prev tag', candidate_previous_tag)
                         print('+++++++++ Q(current, prev)', self.q(current_tag, candidate_previous_tag))
                         print('+++++++++ value(prev, prev_tag))', self.previous_max_tag_value_backtrace(word_index - 1, candidate_previous_tag))
+                        """
                         value = self.q(current_tag, candidate_previous_tag) * \
                             self.previous_max_tag_value_backtrace(
                                 word_index, candidate_previous_tag)
@@ -224,8 +221,8 @@ class HMM:
 
         predicted_tags = []
         # print('Number of words', len(words))
-        print(words)
-        print(word_tags)
+        #print(words)
+        # print(word_tags)
         for j in range(len(words)):
             # print("word: ", words[j], " , Tag: ", word_tags[j])
             predicted_tags.append(word_tags[j])

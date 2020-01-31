@@ -7,6 +7,7 @@ EMOJI_UNK = "<<<EMOJI_UNK>>>"  # Usually start with \214bac
 HASHTAG_UNK = "<<<HASHTAG_UNK>>>" """ Things that has the # hashtag"""
 URL_UNK = "<<<URL_UNK>>>"  # Usually starts with https, http, www
 TIME_UNK = "<<<TIME_UNK>>>"  # Reg Ex of HH:mm::ss
+NUM_UNK = "<<<NUM_UNK>>>" 
 
 START_TAG = "<<<START_POS_TAG>>>"
 STOP_TAG = "<<<STOP_POS_TAG>>>"
