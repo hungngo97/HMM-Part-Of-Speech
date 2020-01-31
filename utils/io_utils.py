@@ -27,7 +27,7 @@ def read_sentences_from_file(file_path, unk=True, unk_threshold=3):
                 pos_tags.append(pos_tag)
             words = words + [STOP]
             pos_tags = pos_tags + [STOP]
-            sentences.append([words, pos_tags])
+            sentences.append((words, pos_tags))
         if (unk):
             sentences = unk_sentences(sentences, unk_threshold=3, unk_prob=0.5)
         return sentences
