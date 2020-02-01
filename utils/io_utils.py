@@ -20,7 +20,7 @@ def is_time_format(s):
 # TODO: Handle bigram, trigram, sentence haven't seen in test and dev
 
 
-def read_sentences_from_file(file_path, unk=True, unk_threshold=3):
+def read_sentences_from_file(file_path, unk=True, unk_threshold=3, selective_unk=False):
     with open(file_path, "r") as file:
         sentences = []
         for sentence in file:
@@ -33,7 +33,9 @@ def read_sentences_from_file(file_path, unk=True, unk_threshold=3):
             words = words + [STOP]
             pos_tags = pos_tags + [STOP]
             sentences.append((words, pos_tags))
-        if (unk):
+        if selective_unk:
+            sentences = selective_unk_sentences(sentences, unk_threshold=3, unk_prob=0.5)
+        elif (unk):
             sentences = unk_sentences(sentences, unk_threshold=3, unk_prob=0.5)
         return sentences
 
@@ -82,13 +84,13 @@ def selective_unk_sentences(sentences, unk_threshold=3, unk_prob=0.5):
         words = sentence[0]
         for i, word in enumerate(words):
             if (token_frequency[word] < unk_threshold):
-                if word.startsWith('@'):
+                if word.startswith('@'):
                     sentence[0][i] = TWEET_DIRECT_UNK
-                elif word.startsWith('\\'):
+                elif word.startswith('\\'):
                     sentence[0][i] = EMOJI_UNK
-                elif word.startsWith('#'):
+                elif word.startswith('#'):
                    sentence[0][i] = HASHTAG_UNK
-                elif word.startsWith('www') or word.startsWith('http'):
+                elif word.startswith('www') or word.startswith('http'):
                     sentence[0][i] = URL_UNK
                 elif word.isdigit():
                     sentence[0][i] = NUM_UNK

@@ -9,7 +9,7 @@ class HMM:
         self.tag_trigrams = {}
         self.tags_frequency = {}
         self.emission_transition = {}
-        self.SMOOTHING = 1000
+        self.SMOOTHING = 500
 
     """
       @param: sentences consists of sentence in form of [[word_i,..., word_n], [tag_i,..., tag_n]]
@@ -52,10 +52,10 @@ class HMM:
         bigram = previous_tag + "_" + current_tag
         unigram = previous_tag
         if bigram in self.tag_bigrams.keys() and unigram in self.tag_unigrams.keys():
-            q_value = float(self.tag_bigrams[bigram]) / \
-                float(self.tag_unigrams[unigram])
+            q_value = float(self.tag_bigrams[bigram] + self.SMOOTHING) / \
+                float(self.tag_unigrams[unigram] + self.SMOOTHING * len(self.tag_unigrams))
         else:
-            q_value = 0  # TODO: Maybe we can add some smoothing here for transition function
+            q_value = 1 / float(self.tag_unigrams[unigram] + self.SMOOTHING) 
         return q_value
 
     """

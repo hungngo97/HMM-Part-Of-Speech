@@ -10,7 +10,7 @@ class TrigramHMM:
         self.tag_trigrams = {}
         self.tags_frequency = {}
         self.emission_transition = {}
-        self.SMOOTHING = 1000
+        self.SMOOTHING = 10
         self.CURRENT_SENTENCE = -1
         
 
@@ -44,6 +44,7 @@ class TrigramHMM:
         else:
             # If that word has never been seen with that tag before
             e_value = 1 / float(self.tag_unigrams[y] + self.SMOOTHING)
+            
         return e_value
 
     """
@@ -56,9 +57,11 @@ class TrigramHMM:
         bigram = previous_tag + "_" + current_tag
         unigram = previous_tag
         if trigram in self.tag_trigrams.keys() and bigram in self.tag_bigrams.keys():
-            q_value = float(self.tag_trigrams[trigram]) / float(self.tag_bigrams[bigram])
+            q_value = float(self.tag_trigrams[trigram] + self.SMOOTHING) / float(self.tag_bigrams[bigram] + self.SMOOTHING * len(self.tag_unigrams))
+            # q_value = float(self.tag_trigrams[trigram]) / float(self.tag_bigrams[bigram])    
         else:
-            q_value = 0  # TODO: Maybe we can add some smoothing here for transition function
+            q_value = 1 / float(self.tag_unigrams[unigram] + self.SMOOTHING) 
+            # q_value = 0
         return q_value
 
     """
